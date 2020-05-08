@@ -96,29 +96,29 @@ class Model(nn.Module):
         if print_: print(x.size())
 
         x = self.block2(x)
-        x = self.maxpool3x3(x)
         if print_: print(x.size())
+        x = self.maxpool3x3(x)
 
         x = self.block3(x)
         if print_: print(x.size())
 
         x = self.block4(x)
-        x = self.maxpool3x3(x)
         if print_: print(x.size())
+        x = self.maxpool3x3(x)
 
         x = self.block5(x)
         if print_: print(x.size())
 
         x = self.block6(x)
-        x = self.maxpool3x3(x)
         if print_: print(x.size())
+        x = self.maxpool3x3(x)
 
         x = self.block7(x)
         if print_: print(x.size())
 
         x = self.block8(x)
-        x = self.maxpool3x3(x)
         if print_: print(x.size())
+        x = self.maxpool3x3(x)
 
         x = self.block9(x)
         if print_: print("u", x.size())
@@ -133,8 +133,8 @@ class Model(nn.Module):
         return x
 
 
-"""x = torch.Tensor(torch.rand((1, 1, 512, 512))).cuda()
+x = torch.Tensor(torch.rand((1, 1, 512, 512))).cuda()
 
 model = Model().cuda()
-x = model.forward(x, print_=True)"""
+x = model.forward(x, print_=True)
 

@@ -6,8 +6,7 @@
 ### The dataset is assembled of [this](https://github.com/ieee8023/covid-chestxray-dataset) dataset for covid images (PA xray type only) and [this](https://github.com/ieee8023/covid-chestxray-dataset) dataset for healthy and other-type pneumonia images
 
 ### images (1, 512, 512):
-![healthy_sample](plots/healthy_sample.jpeg)
-![covid_sample](plots/covid_sample.png)
+![samples](plots/sample.jpeg)
 ##### (left healthy, right covid sample)
 
 # | model:
@@ -27,7 +26,6 @@
 ![training](plots/training_2.png)
 
 ## example outputs:
-![output_healthy_sample](plots/example_prediction_3.png)
-![output_covid_sample](plots/example_prediction_2.png)
+![output_samples](plots/output_sample.jpeg)
 ##### (correct classified: left healthy, right covid sample)
 

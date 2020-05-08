@@ -72,7 +72,7 @@ def recall(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> f
 
 
 # create two subplots for loss and accuracy history
-def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, recalls: list, classes: list=[""]):
+def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, recalls: list, classes: list=[""], save_to: str=""):
     plt.style.use("ggplot")
 
     fig, axs = plt.subplots(3)
@@ -114,4 +114,5 @@ def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, reca
     axs4.legend()
     axs4.set_title("precision of every class")
 
+    plt.savefig(save_to)
     plt.show()

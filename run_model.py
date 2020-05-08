@@ -15,6 +15,8 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import transforms
 
+torch.random.seed(1)
+
 
 classes = {"healthy": [1, 0, 0], "penumonia": [0, 1, 0], "covid": [0, 0, 1]}
 
@@ -48,19 +50,19 @@ class RunModel:
         ])
 
         train_dataloader = torch.utils.data.DataLoader(
-            dataset,
+            train_set,
             batch_size=self.batch_size,
             num_workers=2,
             shuffle=True,
         )
         val_dataloader = torch.utils.data.DataLoader(
-            dataset,
+            val_set,
             batch_size=int(self.batch_size / 2),
             num_workers=1,
             shuffle=True,
         )
         test_dataloader = torch.utils.data.DataLoader(
-            dataset,
+            test_set,
             batch_size=int(self.batch_size / 2),
             num_workers=1,
             shuffle=True,
@@ -146,7 +148,8 @@ class RunModel:
         print("\n finished training")
         precision_data = list(zip(*precision_data))
         recall_data = list(zip(*recall_data))
-        plot(loss_data, validation_accuracy_data, validation_loss_data, precision_data, recall_data, classes=list(classes.keys()))
+        plot(loss_data, validation_accuracy_data, validation_loss_data, precision_data, recall_data,  \
+                    classes=list(classes.keys()), save_to=("plots/training_" + self.model_file.split("_")[1].split(".")[0] + ".png"))                                        
 
     """ tests dataset """
     def test(self, show_examples: bool=True):
@@ -177,10 +180,10 @@ class RunModel:
                     print("\nexpected: ", target.cpu().detach().numpy(), "\ngot:      ", np.around(output.cpu().detach().numpy()))
                     print("\n_______________________\n")
 
-                    example = image.cpu().detach().numpy().reshape(512, 512, 1)
+                    example = image.cpu().detach().numpy().reshape(512, 512)
                     example = example * 255
                     
-                    plt.imshow(image.cpu().detach().numpy().reshape(512, 512, 1))
+                    plt.imshow(image.cpu().detach().numpy().reshape(512, 512))
                     plt.title("got: " + str(output.cpu().detach().numpy()))
                     plt.show()
 
@@ -188,11 +191,11 @@ class RunModel:
 
 if __name__ == "__main__":
     runModel = RunModel(
-        model_file="models/model_1.pt", 
+        model_file="models/model_2.pt", 
         dataset_path="datasets/final-dataset/",
-        test_size=0.075,
-        val_size=0.075,
-        epochs=10,
+        test_size=0.1,
+        val_size=0.1,
+        epochs=12,
         batch_size=16,
         lr=0.0001,
         dropout_chance=0.4,
@@ -200,5 +203,6 @@ if __name__ == "__main__":
 
     runModel.train(continue_=False)
     runModel.test(show_examples=True)
+    
 
 

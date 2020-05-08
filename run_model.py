@@ -1,6 +1,6 @@
 
 from utils import show_progress
-from test_metrics import validate_accuracy, precision, recall, plot
+from test_metrics import validate_accuracy, precision, recall, plot, visualize_feature_maps
 from model import Model
 from chestXrayDataset import ChestXrayDataset
 
@@ -15,7 +15,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import transforms
 
-torch.random.seed(1)
+torch.manual_seed(0)
 
 
 classes = {"healthy": [1, 0, 0], "penumonia": [0, 1, 0], "covid": [0, 0, 1]}
@@ -81,7 +81,7 @@ class RunModel:
             images = images.float().cuda()
             targets = targets.float().cuda()
 
-            predictions = model(images)
+            predictions = model(images, visualize=True)
 
             for i in range(predictions.size()[0]):
                 total_targets.append(targets[i].cpu().detach().numpy())
@@ -201,8 +201,11 @@ if __name__ == "__main__":
         dropout_chance=0.4,
         lr_decay=0.1)
 
+
     runModel.train(continue_=False)
     runModel.test(show_examples=True)
+
+    visualize_feature_maps(Model, model_file="models/model_2.pt", image_file="datasets/final-dataset/2_ddb4f7f4f4ff83d9.jpeg", shape=(1, 512, 512))
     
 
 

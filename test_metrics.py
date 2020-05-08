@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import random
+from PIL import Image
 
 
 # check how much percent were classified correctly
@@ -116,3 +117,22 @@ def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, reca
 
     plt.savefig(save_to)
     plt.show()
+
+
+# visualize feature maps
+def visualize_feature_maps(Model, model_file: str="", image_file: str="", shape: tuple=()):
+    model = Model().cuda()
+    model.load_state_dict(torch.load(model_file))
+    model = model.eval()
+
+    c, w, h = shape[0], shape[1], shape[2]
+
+    image = np.array(Image.open(image_file))
+    image = image[:, :, 0]
+    image = image / 255
+    image = torch.Tensor(image).reshape(1, c, w, h).cuda()
+
+    _ = model(image, print_=True, visualize=True)
+
+
+

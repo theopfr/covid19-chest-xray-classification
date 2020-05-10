@@ -23,6 +23,12 @@
 #### - dropout (dense-layers): 40%
 
 ## trainings-progress:
+### test-accuracy: 93.0233%
+##### (high precision on recall, probably because of the small dataset)
+### recalls:
+#### covid: 100%, other-type pneumonia: 86.667%, healthy: 93.75%
+### precisions:
+#### covid: 100%, other-type pneumonia: 100%, healthy: 100%
 ![training](plots/training_2.png)
 
 ## example outputs:

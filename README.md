@@ -24,7 +24,7 @@
 
 ## trainings-progress:
 ### test-accuracy: 93.0233%
-##### (high precision on recall, probably because of the small dataset)
+##### (high precision and recall, probably because of the small dataset)
 ### recalls:
 #### covid: 100%, other-type pneumonia: 86.667%, healthy: 93.75%
 ### precisions:

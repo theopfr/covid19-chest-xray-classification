@@ -18,11 +18,9 @@ from torchvision import transforms
 torch.manual_seed(0)
 
 
-classes = {"healthy": [1, 0, 0], "penumonia": [0, 1, 0], "covid": [0, 0, 1]}
-
-
 class RunModel:
-    def __init__(self, model_file: str="", dataset_path: str="", test_size: float=0.1, val_size: float=0.1, batch_size: int=64, epochs: int=100, lr: float=1e2, dropout_chance: float=0.5, lr_decay: float=0.1):
+    def __init__(self, Model, model_file: str="", dataset_path: str="", test_size: float=0.1, val_size: float=0.1, batch_size: int=64, epochs: int=100, lr: float=1e2, dropout_chance: float=0.5, lr_decay: float=0.1, evaluation_treshold: float=0.75):
+        self.Model = Model
         self.model_file = model_file
 
         self.dataset_path = dataset_path
@@ -34,8 +32,10 @@ class RunModel:
         self.lr = lr
         self.dropout_chance = dropout_chance
         self.lr_decay = lr_decay
+        self.evaluation_treshold = evaluation_treshold
 
         self.train_set, self.validation_set, self.test_set = self._create_dataloader()
+        self.classes = {"healthy": [1, 0, 0], "penumonia": [0, 1, 0], "covid": [0, 0, 1]}
 
     """ creates dataloader """
     def _create_dataloader(self):
@@ -81,7 +81,7 @@ class RunModel:
             images = images.float().cuda()
             targets = targets.float().cuda()
 
-            predictions = model(images, visualize=True)
+            predictions = model(images)
 
             for i in range(predictions.size()[0]):
                 total_targets.append(targets[i].cpu().detach().numpy())
@@ -95,10 +95,10 @@ class RunModel:
         loss = criterion(predictions, targets).item()
 
         # calculate precision of all labels
-        precisions = precision(total_targets, total_predictions, classes=list(classes.values()), threshold=threshold)
+        precisions = precision(total_targets, total_predictions, classes=list(self.classes.values()), threshold=threshold)
 
         # calculate recall of all labels
-        recalls = recall(total_targets, total_predictions, classes=list(classes.values()), threshold=threshold)
+        recalls = recall(total_targets, total_predictions, classes=list(self.classes.values()), threshold=threshold)
 
         return accuracy, loss, precisions, recalls
 
@@ -106,7 +106,7 @@ class RunModel:
     def train(self, continue_: bool=False):        
         training_dataset = self.train_set
 
-        model = Model(dropout_chance=self.dropout_chance).cuda()
+        model = self.Model(dropout_chance=self.dropout_chance).cuda()
 
         if continue_:
             model.load_state_dict(torch.load(self.model_file))
@@ -133,7 +133,7 @@ class RunModel:
                 epoch_loss.append(loss.item())
 
             current_loss = np.mean(epoch_loss)
-            current_val_accuracy, current_val_loss, precisions, recalls = self._validate(model, self.validation_set, threshold=0.75)
+            current_val_accuracy, current_val_loss, precisions, recalls = self._validate(model, self.validation_set, threshold=self.evaluation_treshold)
 
             show_progress(self.epochs, epoch, current_loss, current_val_accuracy, current_val_loss)
 
@@ -149,7 +149,7 @@ class RunModel:
         precision_data = list(zip(*precision_data))
         recall_data = list(zip(*recall_data))
         plot(loss_data, validation_accuracy_data, validation_loss_data, precision_data, recall_data,  \
-                    classes=list(classes.keys()), save_to=("plots/training_" + self.model_file.split("_")[1].split(".")[0] + ".png"))                                        
+                    classes=list(self.classes.keys()), save_to=("plots/training_" + self.model_file.split("_")[1].split(".")[0] + ".png"))                                        
 
     """ tests dataset """
     def test(self, show_examples: bool=True):
@@ -157,12 +157,12 @@ class RunModel:
         testing_dataset = self.test_set
 
         # load model
-        model = Model(dropout_chance=0.0)
+        model = self.Model(dropout_chance=0.0)
         model.load_state_dict(torch.load(self.model_file))
         model.cuda().eval()
 
         # calculate accuracy of the trained model
-        accuracy, _, precisions, recalls = self._validate(model, self.test_set, threshold=0.75)
+        accuracy, _, precisions, recalls = self._validate(model, self.test_set, threshold=self.evaluation_treshold)
         print("test accuracy:", round(accuracy, 4), "%")
         print("precisions:", precisions)
         print("recalls:", recalls)
@@ -190,22 +190,27 @@ class RunModel:
 
 
 if __name__ == "__main__":
+    model_file = "models/model_3.pt"
+    evaluation_treshold = 0.75
+
     runModel = RunModel(
-        model_file="models/model_2.pt", 
+        Model=Model,
+        model_file=model_file, 
         dataset_path="datasets/final-dataset/",
         test_size=0.1,
         val_size=0.1,
-        epochs=12,
+        epochs=15,
         batch_size=16,
         lr=0.0001,
         dropout_chance=0.4,
-        lr_decay=0.1)
+        lr_decay=0.1,
+        evaluation_treshold=evaluation_treshold) 
 
 
     runModel.train(continue_=False)
     runModel.test(show_examples=True)
 
-    visualize_feature_maps(Model, model_file="models/model_2.pt", image_file="datasets/final-dataset/2_ddb4f7f4f4ff83d9.jpeg", shape=(1, 512, 512))
+    #visualize_feature_maps(Model, model_file=model_file, image_file="datasets/final-dataset/2_ddb4f7f4f4ff83d9.jpeg", shape=(1, 512, 512))
     
 
 

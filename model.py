@@ -159,7 +159,5 @@ class Model(nn.Module):
 
 
 """x = torch.Tensor(torch.rand((1, 1, 512, 512))).cuda()
-
 model = Model().cuda()
 x = model.forward(x, print_=True)"""
-

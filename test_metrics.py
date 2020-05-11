@@ -22,7 +22,7 @@ def validate_accuracy(y_true, y_pred, threshold: float=0.75) -> int:
 
 
 # calculate precision scores of all labels (against all labels)
-def precision(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> float:
+def precision(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> list:
 
     """ FIX THIS SHIT """
 
@@ -49,7 +49,7 @@ def precision(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -
 
 
 # calculate recall scores of all labels (against all labels)
-def recall(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> float:
+def recall(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> list:
     total_prediction_of_classes, total_true_of_classes = [0 for i in range(len(classes))], [0 for i in range(len(classes))]
     for i in range(len(y_true)):
         output, target = y_pred[i], y_true[i]
@@ -133,6 +133,8 @@ def visualize_feature_maps(Model, model_file: str="", image_file: str="", shape:
     image = torch.Tensor(image).reshape(1, c, w, h).cuda()
 
     _ = model(image, print_=True, visualize=True)
+
+        
 
 
 

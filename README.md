@@ -1,4 +1,4 @@
-# Due to the small dataset (145 samples per class), the test results can not be considered accurate!
+# Due to the small dataset (145 samples per class), the test results can not be considered accurate! (This is just proof-of-concept)
 
 
 # | dataset:

@@ -23,9 +23,6 @@ def validate_accuracy(y_true, y_pred, threshold: float=0.75) -> int:
 
 # calculate precision scores of all labels (against all labels)
 def precision(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> list:
-
-    """ FIX THIS SHIT """
-
     total_prediction_of_classes, total_true_prediction_of_classes = [0 for i in range(len(classes))], [0 for i in range(len(classes))]
     for i in range(len(y_true)):
         output, target = y_pred[i], y_true[i]
@@ -56,11 +53,13 @@ def recall(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> l
         output = [1 if e >= threshold else 0 for e in output]
 
         for j in range(len(classes)):
-            if output == classes[j]:
-                total_prediction_of_classes[j] += 1
-
             if list(target) == classes[j]:
                 total_true_of_classes[j] += 1
+
+                if output == classes[j]:
+                    total_prediction_of_classes[j] += 1
+
+    print(total_true_of_classes, total_prediction_of_classes, "\n___\n")
 
     all_recalls = [0 for i in range(len(classes))]
     for i in range(len(classes)):
@@ -69,6 +68,7 @@ def recall(y_true, y_pred, classes=[[1, 0], [0, 1]], threshold: float=0.75) -> l
         else:
             all_recalls[i] = 0
 
+    #print(all_recalls)
     return all_recalls
 
 
@@ -98,7 +98,7 @@ def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, reca
     axs2.plot(xs, val_acc, "r")
     axs2.set_title("val-acc")
 
-    colors = ["b", "r", "g", "y", "orange", "purple", "brown"]
+    colors = ["b", "r", "g", "orange", "purple"]
     np.random.shuffle(colors)
 
     # plot recalls
@@ -115,7 +115,7 @@ def plot(train_loss: list, val_acc: list, val_loss: list, precisions: list, reca
     axs4.legend()
     axs4.set_title("precision of every class")
 
-    plt.savefig(save_to)
+    #plt.savefig(save_to)
     plt.show()
 
 
